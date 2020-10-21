@@ -20,6 +20,8 @@
 /// You can use the DC and DCFLAGS environment variables to override the detected compiler and compilation flags.
 /// You can also pass program names or compilation options on the command-line to override the default ones.
 
+//modified to only compile rabcasm and rabcdasm
+
 module build_rabcdasm;
 
 version(D_Version2)
@@ -77,7 +79,7 @@ int main(string[] args)
 {
 	try
 	{
-		auto programs = ["rabcasm", "rabcdasm", "abcexport", "abcreplace", "swfbinexport", "swfbinreplace", "swfdecompress", "swf7zcompress"];
+		auto programs = ["rabcasm", "rabcdasm"];
 
 		compiler = environment.get("DC", DEFAULT_COMPILER);
 		flags = environment.get("DCFLAGS", DEFAULT_FLAGS).split(" ");
@@ -133,8 +135,8 @@ int main(string[] args)
 		foreach (program; programs)
 			compile(program);
 
-		if (haveLZMA)
-			compile("swflzmacompress");
+		/*if (haveLZMA)
+			compile("swflzmacompress");*/
 
 		return 0;
 	}
