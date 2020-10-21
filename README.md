@@ -13,7 +13,14 @@ To reassemble a swf:
 
     rabcasm swfFilename asasmFilename outputFilename
 
-If asasmFilename is omitted then swfFilename with its extension replaced with .asasm will be used and if outputFilename is omitted then it will use swfFilename. 
+If asasmFilename is omitted then swfFilename with its extension replaced with .asasm will be used and if outputFilename is omitted then it will use swfFilename.
+
+[RABCDAsm]: http://github.com/CyberShadow/RABCDAsm
+
+Limitations
+===========
+
+* Doesn't work if the swf has more than one DoABC tag.
 
 License
 =======
