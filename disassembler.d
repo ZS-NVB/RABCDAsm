@@ -15,6 +15,8 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RABCDAsm.  If not, see <http://www.gnu.org/licenses/>.
  */
+ 
+ //modified to work in memory
 
 module disassembler;
 
@@ -43,12 +45,13 @@ final class StringBuilder
 	static size_t pos;
 
 	string filename;
-	File file;
+	//File file;
+	string data;
 
 	this(string filename)
 	{
 		this.filename = filename;
-		if (exists(longPath(filename)))
+		/*if (exists(longPath(filename)))
 			throw new Exception(filename ~ " exists");
 
 		string[] dirSegments = split(filename, "/");
@@ -59,7 +62,7 @@ final class StringBuilder
 				mkdir(longPath(subdir));
 		}
 		file = openFile(filename, "wb");
-		assert(!pos, "Opening new file with unflushed buffer");
+		assert(!pos, "Opening new file with unflushed buffer");*/
 	}
 
 	static this()
@@ -101,15 +104,18 @@ final class StringBuilder
 	{
 		if (pos)
 		{
-			file.rawWrite(buf[0..pos]);
+			//file.rawWrite(buf[0..pos]);
+			data ~= buf[0..pos];
 			pos = 0;
 		}
 	}
 
-	void save()
+	//void save()
+	void save(ref string[string] strings)
 	{
 		flush();
-		file.close();
+		//file.close();
+		strings[filename] = data;
 	}
 
 	int indent;
@@ -1010,25 +1016,30 @@ final class RefBuilder : ASTraitsVisitor
 final class Disassembler
 {
 	ASProgram as;
-	string name, dir;
+	//string name, dir;
 	RefBuilder refs;
 	bool dumpRaw = true;
+	string[string] strings;
 
 	void newInclude(StringBuilder mainsb, string filename, void delegate(StringBuilder) callback, bool doInline = true)
 	{
 		if (doInline)
 		{
-			string base = dirName(mainsb.filename);
+			/*string base = dirName(mainsb.filename);
 			string full = dir ~ "/" ~ filename;
 			uint up = 0;
 			while (!full.startsWith(base))
 				base = dirName(base), up++;
-			string rel  = replicate("../", up) ~ full[base.length+1..$];
+			string rel  = replicate("../", up) ~ full[base.length+1..$];*/
+			
+			string full = filename;
+			string rel = filename;
 
 			mainsb.flush();
 			StringBuilder sb = new StringBuilder(full);
 			callback(sb);
-			sb.save();
+			//sb.save();
+			sb.save(strings);
 
 			mainsb ~= "#include ";
 			dumpString(mainsb, rel);
@@ -1038,19 +1049,21 @@ final class Disassembler
 			callback(mainsb);
 	}
 
-	this(ASProgram as, string dir, string name)
+	//this(ASProgram as, string dir, string name)
+	this(ASProgram as)
 	{
 		this.as = as;
-		this.name = name;
-		this.dir = dir;
+		//this.name = name;
+		//this.dir = dir;
 	}
 
-	void disassemble()
+	string[string] disassemble()
 	{
 		refs = new RefBuilder(as);
 		refs.run();
 
-		StringBuilder sb = new StringBuilder(dir ~ "/" ~ name ~ ".main.asasm");
+		//StringBuilder sb = new StringBuilder(dir ~ "/" ~ name ~ ".main.asasm");
+		StringBuilder sb = new StringBuilder("main.asasm");
 
 		sb ~= "#version 4";
 		sb.newLine();
@@ -1106,7 +1119,9 @@ final class Disassembler
 		sb.indent--;
 		sb ~= "end ; program"; sb.newLine();
 
-		sb.save();
+		//sb.save();
+		sb.save(strings);
+		return strings;
 	}
 
 	void dumpInt(StringBuilder sb, long v)
