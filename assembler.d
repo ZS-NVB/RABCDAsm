@@ -15,6 +15,8 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RABCDAsm.  If not, see <http://www.gnu.org/licenses/>.
  */
+ 
+ //modified to work in memory
 
 module assembler;
 
@@ -33,6 +35,8 @@ import common;
 
 final class Assembler
 {
+	string[string] strings;
+	
 	static struct Position
 	{
 		SourceFile file;
@@ -247,11 +251,15 @@ final class Assembler
 				pushFile(new SourceFile("#call", readImmString(), readList!('(', ')', readImmString, false)()));
 				break;
 			case "include":
-				pushFile(new SourceFile(convertFilename(readString())));
+				//pushFile(new SourceFile(convertFilename(readString())));
+				string s = cast(string)readString();
+				pushFile(new SourceFile(s, strings[s]));
 				break;
 			case "get":
-				auto filename = convertFilename(readString());
-				pushFile(new SourceFile(filename, toStringLiteral(cast(string)read(longPath(filename)))));
+				/*auto filename = convertFilename(readString());
+				pushFile(new SourceFile(filename, toStringLiteral(cast(string)read(longPath(filename)))));*/
+				string s = cast(string)readString();
+				pushFile(new SourceFile(s, toStringLiteral(strings[s])));
 				break;
 			case "set":
 				vars[readWord()] = readImmString();
@@ -1336,9 +1344,12 @@ final class Assembler
 		return s;
 	}
 
-	void assemble(string mainFilename)
+	//void assemble(string mainFilename)
+	void assemble(ref string[string] strings)
 	{
-		auto mainFile = scoped!SourceFile(mainFilename);
+		this.strings = strings;
+		//auto mainFile = scoped!SourceFile(mainFilename);
+		auto mainFile = scoped!SourceFile("main.asasm", strings["main.asasm"]);
 		pushFile(mainFile);
 
 		try
