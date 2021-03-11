@@ -1454,8 +1454,8 @@ private final class ABCReader
 							traceState[instructionOffset] = TraceState.instruction;
 							traceState[instructionOffset+1..offset] = TraceState.instructionBody;
 
-							if (stopsExecution[instruction.opcode])
-								break;
+							//if (stopsExecution[instruction.opcode])
+							//	break;
 						}
 					}
 					catch (Exception e)
