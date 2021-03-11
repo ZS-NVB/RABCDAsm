@@ -137,8 +137,8 @@ final class StringBuilder
 	{
 		if (!indented)
 		{
-			for (int i=0; i<indent; i++)
-				this ~= ' ';
+			//for (int i=0; i<indent; i++)
+			//	this ~= ' ';
 			indented = true;
 			if (linePrefix)
 				this ~= linePrefix;
@@ -1685,7 +1685,7 @@ final class Disassembler
 		{
 			if (extraNewLine)
 				sb.newLine();
-			extraNewLine = newLineAfter[instruction.opcode];
+			//extraNewLine = newLineAfter[instruction.opcode];
 			checkLabel(ii);
 
 			if (iErrors[ii])
@@ -1697,9 +1697,9 @@ final class Disassembler
 
 			if (instruction.opcode == Opcode.OP_raw)
 			{
-				if (dumpRaw)
+				/*if (dumpRaw)
 					sb ~= "; 0x%02X".format(instruction.arguments[0].ubytev);
-				sb.newLine();
+				sb.newLine();*/
 				continue;
 			}
 
@@ -1707,7 +1707,7 @@ final class Disassembler
 			auto argTypes = opcodeInfo[instruction.opcode].argumentTypes;
 			if (argTypes.length)
 			{
-				foreach (i; opcodeInfo[instruction.opcode].name.length..20)
+				//foreach (i; opcodeInfo[instruction.opcode].name.length..20)
 					sb ~= ' ';
 				foreach (i, type; argTypes)
 				{
