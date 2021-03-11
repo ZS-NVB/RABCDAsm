@@ -1235,6 +1235,13 @@ final class Assembler
 				if (i < argTypes.length-1)
 					expectSymbol(',');
 			}
+			if (instruction.opcode == Opcode.OP_getlocal && instruction.arguments[0].uintv < 4) {
+				instruction.opcode = cast(Opcode)(Opcode.OP_getlocal0 + instruction.arguments[0].uintv);
+				instruction.arguments.length = 0;
+			} else if (instruction.opcode == Opcode.OP_setlocal && instruction.arguments[0].uintv < 4) {
+				instruction.opcode = cast(Opcode)(Opcode.OP_setlocal0 + instruction.arguments[0].uintv);
+				instruction.arguments.length = 0;
+			}
 
 			instructions ~= instruction;
 		}
