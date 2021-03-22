@@ -28,6 +28,7 @@ import std.range;
 import std.stdio;
 import std.string;
 import std.typecons;
+import std.algorithm;
 
 import abcfile;
 import asprogram;
@@ -1096,7 +1097,7 @@ final class Assembler
 			switch (word)
 			{
 				case "maxstack":
-					m.maxStack = readUInt().to!uint();
+					m.maxStack = max(m.maxStack, readUInt().to!uint());
 					break;
 				case "localcount":
 					m.localCount = readUInt().to!uint();
